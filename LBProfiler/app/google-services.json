@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "663471642920",
+    "firebase_url": "https://lbprofiler.firebaseio.com",
+    "project_id": "lbprofiler",
+    "storage_bucket": "lbprofiler.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663471642920:android:242468cb7ef26a14",
+        "android_client_info": {
+          "package_name": "trainedge.lbprofiler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "663471642920-vgveqhq1bn7hsvheepqaqhhp2nbiint4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "trainedge.lbprofiler",
+            "certificate_hash": "b6e35009cec4c14cb0749f857daa3e81b107b6cc"
+          }
+        },
+        {
+          "client_id": "663471642920-9mcujnsh3gqr8v6vl7sbbualsvt1vf2l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgP3FJa2DqCAQpOf6iMs2YuixIoNaPK1Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "663471642920-9mcujnsh3gqr8v6vl7sbbualsvt1vf2l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
