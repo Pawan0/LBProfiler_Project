@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,14 +38,14 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
     public static final String TAG = "LoginActivity";
-    private ImageView ivGSign;
+
     public static final int RC_SIGN_IN=7491;
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private LoginButton loginButton;
-    private CallbackManager callbackManager;
+
     private CallbackManager mCallbackManager;
+    private SignInButton btnGsign;
 
 
     @Override
@@ -52,7 +54,7 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
         setContentView(R.layout.activity_log_in);
         mAuth = FirebaseAuth.getInstance();
 
-        ivGSign= (ImageView) findViewById(R.id.ivGSign);
+        btnGsign = (SignInButton) findViewById(R.id.btnGsign);
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -84,7 +86,7 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
                 // ...
             }
         };
-        ivGSign.setOnClickListener(this);
+        btnGsign.setOnClickListener(this);
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.btnFbLogin);
@@ -176,13 +178,13 @@ public class LogIn extends AppCompatActivity implements GoogleApiClient.OnConnec
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Snackbar.make(ivGSign,"NOT CONNECTEDTO INTERNET", BaseTransientBottomBar.LENGTH_INDEFINITE).show();
+        Snackbar.make(btnGsign,"NOT CONNECTEDTO INTERNET", BaseTransientBottomBar.LENGTH_INDEFINITE).show();
     }
 
     @Override
     public void onClick(View v) {
         switch(v.getId()){
-            case R.id.ivGSign:
+            case R.id.btnGsign:
                 signIn();
                 break;
         }
