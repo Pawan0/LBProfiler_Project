@@ -6,4 +6,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="fb_login_protocol_scheme">fb1517816044938000</string>
     <string name="action_settings">Settings</string>
+    <string name="invitation_title">download my app</string>
+    <string name="invitation_message">join my app to get free 10000 likes on every fb pic</string>
+    <string name="invitation_cta">play store link</string>
 </resources>

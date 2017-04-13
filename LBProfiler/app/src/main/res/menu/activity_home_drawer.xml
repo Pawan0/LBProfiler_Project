@@ -3,19 +3,19 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/add_location"
             android:icon="@android:drawable/ic_input_add"
             android:title="Add Location Profile" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/manage_location"
             android:icon="@drawable/ic_edit_location_black_24dp"
             android:title="Manage Location Profile" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/feedback"
             android:icon="@drawable/ic_feedback_black_24dp"
             android:title="Feedback" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/log_out"
             android:icon="@android:drawable/ic_lock_power_off"
             android:title="Log Out" />
     </group>
@@ -23,11 +23,11 @@
     <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/app_invite"
                 android:icon="@drawable/ic_menu_share"
                 android:title="App Invite" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/about"
                 android:icon="@drawable/ic_priority_high_black_24dp"
                 android:title="About" />
         </menu>
