@@ -9,4 +9,11 @@
     <string name="invitation_title">download my app</string>
     <string name="invitation_message">join my app to get free 10000 likes on every fb pic</string>
     <string name="invitation_cta">play store link</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_place_selection">Map</string>
+    <string name="service_not_available">Service Not Available</string>
+    <string name="invalid_lat_long_used">Sorry wrong Lattitude</string>
+    <string name="no_address_found">No Address Found</string>
+    <string name="address_found">Address Found</string>
+    <string name="no_geocoder_available">No Geo Coder Available</string>
 </resources>
