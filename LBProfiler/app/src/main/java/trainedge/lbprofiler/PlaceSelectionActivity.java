@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +39,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class PlaceSelectionActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,LocationListener {
+public class PlaceSelectionActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,LocationListener, View.OnClickListener {
 
     private static final int REQUEST_LOCATION_PERMISSION = 2312;
     private static final int REQUEST_CHECK_SETTINGS = 9389;
@@ -57,6 +58,8 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
     protected boolean mAddressRequested;
     protected String mAddressOutput;
     private ProgressBar pbLoader;
+    Button btnOk;
+    private LatLng userLocationSelected;
 
 
     @Override
@@ -90,7 +93,8 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         updateValuesFromBundle(savedInstanceState);
 
         // Create an instance of GoogleAPIClient.
-
+        btnOk= (Button) findViewById(R.id.btnOk);
+        btnOk.setOnClickListener(this);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -133,6 +137,8 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
     }
 
     private void updateMapUi(LatLng latLng) {
+
+        userLocationSelected =latLng;
 
     }
 
@@ -177,6 +183,20 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         intent.putExtra(FetchAddressIntentService.Constants.LOCATION_LATITUDE_EXTRA, latLng.latitude);
         intent.putExtra(FetchAddressIntentService.Constants.LOCATION_LONGITUDE_EXTRA, latLng.longitude);
         startService(intent);
+
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        if(userLocationSelected!=null)
+        {
+            Intent ii=new Intent(PlaceSelectionActivity.this,ProfileCreation.class);
+            startActivity(ii);
+        }
+        else{
+            Toast.makeText(this, "Location is not selected, PLease Long Press on Desired Location", Toast.LENGTH_LONG).show();
+        }
 
     }
 
@@ -264,7 +284,10 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
+            setMapInteraction();
+        }else{
 
+            Toast.makeText(this, "Location Not Found", Toast.LENGTH_SHORT).show();
         }
         //currentLocation reqeuest
         createLocationRequest();
@@ -275,7 +298,7 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
                 startIntentService(currentLocation);
         }
         //allow user to use map and select Location
-        setMapInteraction();
+       
     }
 
     @Override

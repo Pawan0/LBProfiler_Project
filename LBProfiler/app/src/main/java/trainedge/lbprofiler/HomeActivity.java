@@ -104,7 +104,8 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.add_location) {
-            // Handle the camera action
+           Intent i=new Intent(HomeActivity.this,PlaceSelectionActivity.class);
+            startActivity(i);
         } else if (id == R.id.manage_location) {
 
         } else if (id == R.id.feedback) {

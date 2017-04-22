@@ -16,4 +16,5 @@
     <string name="no_address_found">No Address Found</string>
     <string name="address_found">Address Found</string>
     <string name="no_geocoder_available">No Geo Coder Available</string>
+    <string name="title_activity_profile__creation">Profile_Creation</string>
 </resources>

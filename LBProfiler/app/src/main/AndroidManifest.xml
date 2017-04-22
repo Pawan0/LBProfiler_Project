@@ -65,7 +65,9 @@
 
         <service
             android:name=".FetchAddressIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <activity android:name=".ProfileCreation"></activity>
     </application>
 
 </manifest>
