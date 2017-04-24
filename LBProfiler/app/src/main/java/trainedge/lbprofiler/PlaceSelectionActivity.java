@@ -49,6 +49,7 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
     private AddressResultReceiver mResultReceiver;
     private Location currentLocation;
     private TextView tvAddress;
+    String address;
 
     protected Location mLastLocation;
 
@@ -190,8 +191,12 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
     public void onClick(View v)
     {
         if(userLocationSelected!=null)
-        {
+        {    address = tvAddress.getText().toString();
+
             Intent ii=new Intent(PlaceSelectionActivity.this,ProfileCreation.class);
+
+
+            ii.putExtra("address",address);
             startActivity(ii);
         }
         else{
