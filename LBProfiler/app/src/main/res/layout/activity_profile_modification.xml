@@ -15,7 +15,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Details For Profile Creation"
+        android:text="Modify Details Of Profile Created"
         android:textAlignment="center"
         android:textAllCaps="true"
 
@@ -163,10 +163,11 @@
 
         android:layout_marginTop="0dp"
         android:fontFamily="sans-serif-condensed"
-        android:text="CREATE"
+        android:text="MODIFY"
         android:textSize="24sp"
         android:textStyle="italic"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="504dp" />
 
 </LinearLayout>
+

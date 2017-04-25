@@ -194,8 +194,6 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         {    address = tvAddress.getText().toString();
 
             Intent ii=new Intent(PlaceSelectionActivity.this,ProfileCreation.class);
-
-
             ii.putExtra("address",address);
             startActivity(ii);
         }

@@ -107,6 +107,8 @@ public class HomeActivity extends AppCompatActivity
            Intent i=new Intent(HomeActivity.this,PlaceSelectionActivity.class);
             startActivity(i);
         } else if (id == R.id.manage_location) {
+            Intent i=new Intent(HomeActivity.this,ProfileModification.class);
+            startActivity(i);
 
         } else if (id == R.id.feedback) {
 
