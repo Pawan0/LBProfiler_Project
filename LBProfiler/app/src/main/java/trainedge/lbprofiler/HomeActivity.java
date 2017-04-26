@@ -104,7 +104,9 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.add_location) {
+
            Intent i=new Intent(HomeActivity.this,PlaceSelectionActivity.class);
+
             startActivity(i);
         } else if (id == R.id.manage_location) {
             Intent i=new Intent(HomeActivity.this,ProfileModification.class);

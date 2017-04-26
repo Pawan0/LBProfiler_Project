@@ -193,9 +193,11 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         if(userLocationSelected!=null)
         {    address = tvAddress.getText().toString();
 
-            Intent ii=new Intent(PlaceSelectionActivity.this,ProfileCreation.class);
-            ii.putExtra("address",address);
-            startActivity(ii);
+            Intent i=new Intent(PlaceSelectionActivity.this,ProfileCreation.class);
+            i.putExtra("trainedge.lbprofiler.address",address);
+            i.putExtra("trainedge.lbprofiler.latitude",userLocationSelected.latitude);
+            i.putExtra("trainedge.lbprofiler.longitude",userLocationSelected.longitude);
+            startActivity(i);
         }
         else{
             Toast.makeText(this, "Location is not selected, PLease Long Press on Desired Location", Toast.LENGTH_LONG).show();
