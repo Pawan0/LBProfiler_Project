@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@drawable/abcd"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".Feedback">
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/mylogo2" />
+
+    <TextView
+        android:id="@+id/lblHowHappy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="How happy are you with LBProfiler ?"
+        android:textColor="@color/cardview_light_background"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <android.support.v7.widget.AppCompatRatingBar
+        android:id="@+id/ratingBar"
+        style="?android:attr/ratingBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10.00dp"
+        android:isIndicator="false"
+        android:numStars="5"
+        android:rating="0"
+        android:stepSize="1"
+        android:theme="@style/RatingBar"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/layoutForm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/lblWeHearFeedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="47.50dp"
+            android:gravity="center"
+            android:text="We'd love to hear more"
+            android:textColor="#b4bdda15"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/txtComments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="47.50dp"
+            android:layout_marginRight="47.50dp"
+            android:layout_marginTop="47.50dp"
+            android:background="@drawable/test_shape_drawable"
+            android:gravity="top|left"
+            android:hint="Your Comments..."
+            android:lines="6"
+            android:padding="17.00dp"
+            android:textColorHint="@color/starNormalColor"
+            android:textSize="16.80dp" />
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="47.50dp"
+            android:layout_marginRight="47.50dp"
+            android:layout_marginTop="17.00dp"
+            android:text="Submit"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:theme="@style/MyButton" />
+
+        <TextView
+            android:id="@+id/lblThanksFeedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10.00dp"
+            android:gravity="center"
+            android:text="Woah! Thank you for your feedback!"
+            android:textColor="#ef731b"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+</LinearLayout>

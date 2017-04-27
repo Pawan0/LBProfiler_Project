@@ -3,4 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="starNormalColor">#c4c4c4</color>
+
+    <color name="colorMediumPurple">#8C53E5</color>
+    <color name="colorPurpleHeart">#5E2EAA</color>
+    <color name="gggggg">#eb7b8c</color>
+
 </resources>
