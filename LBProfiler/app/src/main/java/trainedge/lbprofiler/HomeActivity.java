@@ -22,6 +22,7 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     public static final int REQUEST_INVITE = 232;
     public static final String TAG ="HomeActivity";
+    public static final int INVITATION_MESSAGE = R.string.invitation_message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class HomeActivity extends AppCompatActivity
     }
     private void sendInvitation() {
         Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
-                .setMessage(getString(R.string.invitation_message))
+                .setMessage(getString(INVITATION_MESSAGE))
                 .setCallToActionText(getString(R.string.invitation_cta))
                 .build();
         startActivityForResult(intent, REQUEST_INVITE);
@@ -124,6 +125,8 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.app_invite) {
         sendInvitation();
         } else if (id == R.id.about) {
+            Intent i = new Intent(HomeActivity.this,AboutActivity.class);
+            startActivity(i);
 
         }
 

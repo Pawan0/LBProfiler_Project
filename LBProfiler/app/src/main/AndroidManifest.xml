@@ -72,6 +72,7 @@
         <activity android:name=".ProfileModification" />
         <activity android:name=".Feedback"
             ></activity>
+        <activity android:name=".AboutActivity"></activity>
     </application>
 
 </manifest>
