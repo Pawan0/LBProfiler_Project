@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+   >
+
+    <android.support.v7.widget.CardView
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/common_google_signin_btn_text_light_disabled"
+        app:cardCornerRadius="6dp"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="-3dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp">
+
+            <TextView
+                android:id="@+id/Listitem_geofenceName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp"
+                tools:text="Geofence Name" />
+
+            <View
+                android:id="@+id/view"
+                style="Divider.Horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@android:style/Widget.DeviceDefault.TextView"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:text="Latitude" />
+
+                    <TextView
+                        android:id="@+id/listitem_geofenceLatitude"
+                        style="@android:style/Widget.DeviceDefault.TextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Latitude" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@android:style/Widget.DeviceDefault.TextView"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:text="Longitude" />
+
+                    <TextView
+                        android:id="@+id/listitem_geofenceLongitude"
+                        style="@android:style/Widget.DeviceDefault.TextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Longitude" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@android:style/Widget.DeviceDefault.TextView"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:text="Radius" />
+
+                    <TextView
+                        android:id="@+id/listitem_geofenceRadius"
+                        style="@android:style/Widget.DeviceDefault.TextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Radius" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</android.support.constraint.ConstraintLayout>

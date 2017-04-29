@@ -50,6 +50,10 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
     private Location currentLocation;
     private TextView tvAddress;
     String address;
+    private static final String PACKAGE_NAME = "trainedge.lbprofiler";
+    public static final String KEY_ADDRESS = PACKAGE_NAME + ".address";
+    public static final String KEY_LAT = PACKAGE_NAME + ".latitude";
+    public static final String KEY_LNG = PACKAGE_NAME + ".longitude";
 
     protected Location mLastLocation;
 

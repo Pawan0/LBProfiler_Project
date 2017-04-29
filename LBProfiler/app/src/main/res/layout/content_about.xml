@@ -105,6 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="130dp"
                 android:layout_marginTop="120dp"
+                android:autoLink="email"
                 android:drawableLeft="@drawable/ic_email_black_24dp"
                 android:fontFamily="sans-serif"
                 android:text="pawasthi214@gmail.com"
