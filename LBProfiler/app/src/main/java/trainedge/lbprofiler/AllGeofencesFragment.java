@@ -18,8 +18,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
+import static trainedge.lbprofiler.PlaceSelectionActivity.KEY_ADDRESS;
+import static trainedge.lbprofiler.PlaceSelectionActivity.KEY_LAT;
+import static trainedge.lbprofiler.PlaceSelectionActivity.KEY_LNG;
 
 
 public class AllGeofencesFragment extends Fragment implements AddGeofenceFragment.AddGeofenceFragmentListener {
