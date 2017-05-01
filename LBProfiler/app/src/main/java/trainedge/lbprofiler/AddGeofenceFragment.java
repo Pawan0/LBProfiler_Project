@@ -21,6 +21,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,9 +54,6 @@ public class AddGeofenceFragment extends DialogFragment {
         this.listener = listener;
     }
 
-    // endregion
-
-    // region Overrides
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -110,7 +109,9 @@ public class AddGeofenceFragment extends DialogFragment {
                 });
 
         final AlertDialog dialog = builder.create();
-
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("geofire").child(uid);
+        final GeoFire geoFire = new GeoFire(ref);
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
@@ -120,18 +121,30 @@ public class AddGeofenceFragment extends DialogFragment {
                     @Override
                     public void onClick(View view) {
                         if (dataIsValid()) {
-                            NamedGeofence geofence = new NamedGeofence();
-                            geofence.name = getViewHolder().taskNameEditText.getText().toString();
+                            String name = getViewHolder().taskNameEditText.getText().toString();
+
+                            /*use  geofire*/
+                            /*geofence.name = getViewHolder().taskNameEditText.getText().toString();
                             geofence.address = address;
                             geofence.latitude = Double.parseDouble(getViewHolder().latitudeEditText.getText().toString());
                             geofence.longitude = Double.parseDouble(getViewHolder().longitudeEditText.getText().toString());
                             geofence.radius = Float.parseFloat(getViewHolder().radiusEditText.getText().toString()) * 1000.0f;
-                            geofence.ringtone = chosenRingtone;
+                            geofence.ringtone = chosenRingtone;*/
+                            geoFire.setLocation(name, new GeoLocation(lat, lng), new GeoFire.CompletionListener() {
+                                @Override
+                                public void onComplete(String key, DatabaseError error) {
+                                    if (error != null) {
+                                        System.err.println("There was an error saving the location to GeoFire: " + error);
+                                    } else {
+                                        System.out.println("Location saved on server successfully!");
+                                    }
+                                }
+                            });
 
                             // upload to cloud
                             uploadtoFirebase(
-                                    FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                                    getViewHolder().taskNameEditText.getText().toString(),
+                                    uid,
+                                    name,
                                     address,
                                     lat,
                                     lng,
@@ -141,7 +154,6 @@ public class AddGeofenceFragment extends DialogFragment {
                             );
 
                             if (listener != null) {
-                                listener.onDialogPositiveClick(AddGeofenceFragment.this, geofence);
                                 dialog.dismiss();
                             }
                         } else {
@@ -169,7 +181,7 @@ public class AddGeofenceFragment extends DialogFragment {
         map.put("ringtone", chosenRingtone);
         map.put("date", dateStr);
         map.put("status", false);
-        FirebaseDatabase.getInstance().getReference("tasks").child(uid).push().setValue(map, new DatabaseReference.CompletionListener() {
+        FirebaseDatabase.getInstance().getReference("profiles").child(uid).push().setValue(map, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 Toast.makeText(getContext(), "success", Toast.LENGTH_SHORT).show();
@@ -196,9 +208,9 @@ public class AddGeofenceFragment extends DialogFragment {
             double latitude = Double.parseDouble(latitudeString);
             double longitude = Double.parseDouble(longitudeString);
             float radius = Float.parseFloat(radiusString);
-            if ((latitude < FetchAddressIntentService.Constants.Geometry.MinLatitude || latitude > FetchAddressIntentService.Constants.Geometry.MaxLatitude)
-                    || (longitude < FetchAddressIntentService.Constants.Geometry.MinLongitude || longitude > FetchAddressIntentService.Constants.Geometry.MaxLongitude)
-                    || (radius < FetchAddressIntentService.Constants.Geometry.MinRadius || radius > FetchAddressIntentService.Constants.Geometry.MaxRadius)) {
+            if ((latitude < Constants.Geometry.MinLatitude || latitude > Constants.Geometry.MaxLatitude)
+                    || (longitude < Constants.Geometry.MinLongitude || longitude > Constants.Geometry.MaxLongitude)
+                    || (radius < Constants.Geometry.MinRadius || radius > Constants.Geometry.MaxRadius)) {
                 validData = false;
             }
         }
@@ -262,9 +274,9 @@ public class AddGeofenceFragment extends DialogFragment {
             notificationTextView = (TextView) v.findViewById(R.id.add_geofence_notification);
             addressEditText = (EditText) v.findViewById(R.id.add_geofence_address);
 
-            latitudeEditText.setHint(String.format(v.getResources().getString(R.string.Hint_Latitude), FetchAddressIntentService.Constants.Geometry.MinLatitude, FetchAddressIntentService.Constants.Geometry.MaxLatitude));
-            longitudeEditText.setHint(String.format(v.getResources().getString(R.string.Hint_Longitude), FetchAddressIntentService.Constants.Geometry.MinLongitude, FetchAddressIntentService.Constants.Geometry.MaxLongitude));
-            radiusEditText.setHint(String.format(v.getResources().getString(R.string.Hint_Radius), FetchAddressIntentService.Constants.Geometry.MinRadius, FetchAddressIntentService.Constants.Geometry.MaxRadius));
+            latitudeEditText.setHint(String.format(v.getResources().getString(R.string.Hint_Latitude), Constants.Geometry.MinLatitude, Constants.Geometry.MaxLatitude));
+            longitudeEditText.setHint(String.format(v.getResources().getString(R.string.Hint_Longitude), Constants.Geometry.MinLongitude, Constants.Geometry.MaxLongitude));
+            radiusEditText.setHint(String.format(v.getResources().getString(R.string.Hint_Radius), Constants.Geometry.MinRadius, Constants.Geometry.MaxRadius));
         }
     }
 

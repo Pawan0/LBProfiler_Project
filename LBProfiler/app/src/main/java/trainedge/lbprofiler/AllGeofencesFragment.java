@@ -82,9 +82,6 @@ public class AllGeofencesFragment extends Fragment implements AddGeofenceFragmen
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), PlaceSelectionActivity.class);
                 startActivityForResult(intent, REQUEST_MAP_CODE);
-                /*AddGeofenceFragment dialogFragment = new AddGeofenceFragment();
-                dialogFragment.setListener(AllGeofencesFragment.this);
-                dialogFragment.show(getActivity().getSupportFragmentManager(), "AddGeofenceFragment");*/
             }
         });
         refresh();
@@ -109,7 +106,7 @@ public class AllGeofencesFragment extends Fragment implements AddGeofenceFragmen
         dialogFragment.show(getActivity().getSupportFragmentManager(), "AddGeofenceFragment");
     }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_delete_all) {
@@ -131,7 +128,7 @@ public class AllGeofencesFragment extends Fragment implements AddGeofenceFragmen
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     // endregion
 

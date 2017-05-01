@@ -71,7 +71,7 @@ public class GeofenceController {
     gson = new Gson();
     namedGeofences = new ArrayList<>();
     namedGeofencesToRemove = new ArrayList<>();
-    prefs = this.context.getSharedPreferences(FetchAddressIntentService.Constants.SharedPrefs.Geofences, Context.MODE_PRIVATE);
+    prefs = this.context.getSharedPreferences(Constants.SharedPrefs.Geofences, Context.MODE_PRIVATE);
 
     loadGeofences();
   }

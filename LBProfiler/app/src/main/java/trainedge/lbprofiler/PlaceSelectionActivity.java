@@ -1,5 +1,7 @@
 package trainedge.lbprofiler;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -20,6 +22,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -38,8 +44,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-public class PlaceSelectionActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,LocationListener, View.OnClickListener {
+public class PlaceSelectionActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
 
     private static final int REQUEST_LOCATION_PERMISSION = 2312;
     private static final int REQUEST_CHECK_SETTINGS = 9389;
@@ -83,8 +93,10 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         //only for m or above
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
                 return;
             } else {
                 Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show();
@@ -98,7 +110,7 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         updateValuesFromBundle(savedInstanceState);
 
         // Create an instance of GoogleAPIClient.
-        btnOk= (Button) findViewById(R.id.btnOk);
+        btnOk = (Button) findViewById(R.id.btnOk);
         btnOk.setOnClickListener(this);
     }
 
@@ -129,7 +141,7 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         if (mMap == null) {
             return;
         }
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude()),16));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 16));
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
@@ -143,7 +155,7 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
 
     private void updateMapUi(LatLng latLng) {
 
-        userLocationSelected =latLng;
+        userLocationSelected = latLng;
 
     }
 
@@ -156,7 +168,7 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
     }
 
     protected void stopLocationUpdates() {
-        if (mGoogleApiClient!=null&& mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(
                     mGoogleApiClient, this);
         }
@@ -192,18 +204,16 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
     }
 
     @Override
-    public void onClick(View v)
-    {
-        if(userLocationSelected!=null)
-        {    address = tvAddress.getText().toString();
+    public void onClick(View v) {
+        if (userLocationSelected != null) {
+            address = tvAddress.getText().toString();
 
-            Intent i=new Intent(PlaceSelectionActivity.this,ProfileCreation.class);
-            i.putExtra("trainedge.lbprofiler.address",address);
-            i.putExtra("trainedge.lbprofiler.latitude",userLocationSelected.latitude);
-            i.putExtra("trainedge.lbprofiler.longitude",userLocationSelected.longitude);
+            Intent i = new Intent(PlaceSelectionActivity.this, ProfileCreation.class);
+            i.putExtra("trainedge.lbprofiler.address", address);
+            i.putExtra("trainedge.lbprofiler.latitude", userLocationSelected.latitude);
+            i.putExtra("trainedge.lbprofiler.longitude", userLocationSelected.longitude);
             startActivity(i);
-        }
-        else{
+        } else {
             Toast.makeText(this, "Location is not selected, PLease Long Press on Desired Location", Toast.LENGTH_LONG).show();
         }
 
@@ -294,7 +304,7 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
             setMapInteraction();
-        }else{
+        } else {
 
             Toast.makeText(this, "Location Not Found", Toast.LENGTH_SHORT).show();
         }
@@ -307,7 +317,7 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
                 startIntentService(currentLocation);
         }
         //allow user to use map and select Location
-       
+
     }
 
     @Override
@@ -351,6 +361,39 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
     @Override
     public void onLocationChanged(Location location) {
         this.currentLocation = location;//call for address here
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("geofire").child(uid);
+        GeoFire geoFire = new GeoFire(ref);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), 0.5);
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                TaskGeofenceNotification.notify(PlaceSelectionActivity.this, "sound profile updated", 0);
+                SoundProfileManager spm = new SoundProfileManager(PlaceSelectionActivity.this);
+                spm.changeSoundProfile(key);
+                System.out.println(String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+                System.out.println(String.format("Key %s is no longer in the search area", key));
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+                System.out.println(String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                System.out.println("All initial data has been loaded and events have been fired!");
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+                System.err.println("There was an error with this query: " + error);
+            }
+        });
     }
 
     @Override

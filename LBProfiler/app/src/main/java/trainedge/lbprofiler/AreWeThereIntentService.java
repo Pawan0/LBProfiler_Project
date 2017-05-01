@@ -45,7 +45,7 @@ public class AreWeThereIntentService extends IntentService implements TextToSpee
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        prefs = getApplicationContext().getSharedPreferences(FetchAddressIntentService.Constants.SharedPrefs.Geofences, Context.MODE_PRIVATE);
+        prefs = getApplicationContext().getSharedPreferences(Constants.SharedPrefs.Geofences, Context.MODE_PRIVATE);
         gson = new Gson();
 
         GeofencingEvent event = GeofencingEvent.fromIntent(intent);
