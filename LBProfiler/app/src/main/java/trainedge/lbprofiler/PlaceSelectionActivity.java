@@ -1,6 +1,5 @@
 package trainedge.lbprofiler;
 
-import android.*;
 import android.Manifest;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -43,7 +42,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -92,18 +90,7 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         mResultReceiver = new AddressResultReceiver(new Handler());
         //only for m or above
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-                return;
-            } else {
-                Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(this, "Not Marshmellow", Toast.LENGTH_SHORT).show();
-        }
+
 
         mAddressRequested = true;
         mAddressOutput = "";
@@ -368,14 +355,14 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                TaskGeofenceNotification.notify(PlaceSelectionActivity.this, "sound profile updated", 0);
+                ProfileGeofenceNotification.notify(PlaceSelectionActivity.this, "sound profile updated", 0);
                 SoundProfileManager spm = new SoundProfileManager(PlaceSelectionActivity.this);
                 spm.changeSoundProfile(key);
-                System.out.println(String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
             }
 
             @Override
             public void onKeyExited(String key) {
+
                 System.out.println(String.format("Key %s is no longer in the search area", key));
             }
 
@@ -406,14 +393,4 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show();
-            } else {
-                finish();
-            }
-        }
-    }
-}
+  }

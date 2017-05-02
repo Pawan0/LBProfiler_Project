@@ -18,4 +18,8 @@ public class SoundProfileManager {
     void changeSoundProfile(String key) {
         FirebaseDatabase.getInstance().getReference();
     }
+
+    public void setToDefualt() {
+
+    }
 }

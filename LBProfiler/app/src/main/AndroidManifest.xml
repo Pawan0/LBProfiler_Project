@@ -70,9 +70,13 @@
 
         <activity android:name=".ProfileCreation" />
         <activity android:name=".ProfileModification" />
-        <activity android:name=".Feedback"
-            ></activity>
-        <activity android:name=".AboutActivity"></activity>
+        <activity android:name=".Feedback" />
+        <activity android:name=".AboutActivity" />
+
+        <service
+            android:name=".GeofenceService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

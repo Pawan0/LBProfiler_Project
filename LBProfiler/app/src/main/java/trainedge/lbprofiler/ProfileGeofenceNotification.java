@@ -13,7 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
-public class TaskGeofenceNotification {
+public class ProfileGeofenceNotification {
     private static final String NOTIFICATION_TAG = "TaskGeofence";
     public static void notify(final Context context,
                               final String exampleString, final int number) {

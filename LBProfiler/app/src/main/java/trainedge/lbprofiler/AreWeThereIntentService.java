@@ -110,7 +110,7 @@ public class AreWeThereIntentService extends IntentService implements TextToSpee
 
             Context context = null;
             engine = new TextToSpeech(context, this);
-            TaskGeofenceNotification.notify(getApplicationContext(), "You have reached your destination, ", 0);
+            ProfileGeofenceNotification.notify(getApplicationContext(), "You have reached your destination, ", 0);
             initTTS();
         }
     }
