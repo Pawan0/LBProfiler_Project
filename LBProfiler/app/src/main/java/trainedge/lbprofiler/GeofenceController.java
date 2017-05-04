@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import trainedge.lbprofiler.services.AreWeThereIntentService;
+
 public class GeofenceController {
 
   // region Properties

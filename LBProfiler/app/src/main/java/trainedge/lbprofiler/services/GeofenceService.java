@@ -1,9 +1,7 @@
-package trainedge.lbprofiler;
+package trainedge.lbprofiler.services;
 
 import android.app.Service;
-import android.bluetooth.BluetoothGattServer;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
@@ -21,16 +19,10 @@ import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,19 +32,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import trainedge.lbprofiler.ProfileGeofenceNotification;
+import trainedge.lbprofiler.R;
+import trainedge.lbprofiler.SoundProfileManager;
+
 import static java.lang.String.format;
 
 public class GeofenceService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-    private final String service;
-    private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
-    private Location mCurrentLocation;
-    private SoundProfileManager spm;
+    String service;
+    GoogleApiClient mGoogleApiClient;
+    LocationRequest mLocationRequest;
+    Location mCurrentLocation;
+    SoundProfileManager spm;
 
     public GeofenceService() {
         service = "location geofence service";
     }
-
 
     private final IBinder myBinder = new MyLocalBinder();
 
@@ -82,7 +77,7 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
     }
 
     public class MyLocalBinder extends Binder {
-        GeofenceService getService() {
+        public GeofenceService getService() {
             return GeofenceService.this;
         }
     }
@@ -129,7 +124,7 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
                 ProfileGeofenceNotification.notify(GeofenceService.this, "sound profile updated", 0);
                 spm.changeSoundProfile(key);
                 String msgToDisplay = format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude, 0);
-                ProfileGeofenceNotification.notify(GeofenceService.this, msgToDisplay,1);
+                ProfileGeofenceNotification.notify(GeofenceService.this, msgToDisplay, 1);
             }
 
             @Override

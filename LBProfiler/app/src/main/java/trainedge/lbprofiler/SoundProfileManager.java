@@ -8,14 +8,14 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class SoundProfileManager {
 
-    private final Context context;
+    Context context;
 
     public SoundProfileManager(Context context) {
         this.context = context;
 
     }
 
-    void changeSoundProfile(String key) {
+    public void changeSoundProfile(String key) {
         FirebaseDatabase.getInstance().getReference();
     }
 

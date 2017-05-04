@@ -69,6 +69,7 @@
 
             android:layout_marginTop="4dp"
             android:ems="10"
+            android:hint="in meters"
             android:inputType="number"
             android:maxLength="4"
             tools:layout_editor_absoluteX="159dp"

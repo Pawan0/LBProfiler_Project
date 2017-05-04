@@ -1,4 +1,4 @@
-package trainedge.lbprofiler;
+package trainedge.lbprofiler.services;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -20,6 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import trainedge.lbprofiler.AllGeofencesActivity;
+import trainedge.lbprofiler.Constants;
+import trainedge.lbprofiler.NamedGeofence;
+import trainedge.lbprofiler.ProfileGeofenceNotification;
+import trainedge.lbprofiler.R;
 
 public class AreWeThereIntentService extends IntentService implements TextToSpeech.OnInitListener {
 

@@ -2,7 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="trainedge.lbprofiler">
 
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -64,19 +73,19 @@
             android:name=".PlaceSelectionActivity"
             android:label="@string/title_activity_place_selection" />
 
-        <service
-            android:name=".FetchAddressIntentService"
-            android:exported="false" />
-
         <activity android:name=".ProfileCreation" />
         <activity android:name=".ProfileModification" />
         <activity android:name=".Feedback" />
         <activity android:name=".AboutActivity" />
 
         <service
-            android:name=".GeofenceService"
+            android:name=".services.FetchAddressIntentService"
+            android:exported="false" />
+
+        <service
+            android:name=".services.GeofenceService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
     </application>
 
 </manifest>

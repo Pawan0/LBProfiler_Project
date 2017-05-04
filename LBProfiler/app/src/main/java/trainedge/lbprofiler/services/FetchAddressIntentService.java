@@ -1,4 +1,4 @@
-package trainedge.lbprofiler;
+package trainedge.lbprofiler.services;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import trainedge.lbprofiler.R;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in

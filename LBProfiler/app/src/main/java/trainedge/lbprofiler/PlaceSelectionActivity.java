@@ -1,18 +1,17 @@
 package trainedge.lbprofiler;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 import android.view.View;
@@ -41,11 +40,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import trainedge.lbprofiler.services.FetchAddressIntentService;
 
 public class PlaceSelectionActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
 
@@ -91,7 +93,6 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         //only for m or above
 
 
-
         mAddressRequested = true;
         mAddressOutput = "";
         updateValuesFromBundle(savedInstanceState);
@@ -128,7 +129,8 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         if (mMap == null) {
             return;
         }
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 16));
+        LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
@@ -138,6 +140,12 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
                 updateMapUi(latLng);
             }
         });
+        CircleOptions circleOptions = new CircleOptions();
+        circleOptions.center(latLng);
+        circleOptions.radius(200);
+        circleOptions.strokeColor(Color.argb(100,055,55,40));
+        circleOptions.fillColor(Color.argb(100,255,255,0));
+        mMap.addCircle(circleOptions);
     }
 
     private void updateMapUi(LatLng latLng) {
@@ -393,4 +401,4 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         super.onSaveInstanceState(savedInstanceState);
     }
 
-  }
+}
