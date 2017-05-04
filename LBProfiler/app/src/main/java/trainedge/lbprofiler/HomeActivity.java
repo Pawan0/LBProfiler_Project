@@ -10,21 +10,33 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Toast;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import trainedge.lbprofiler.services.GeofenceService;
 
 public class HomeActivity extends AppCompatActivity
@@ -33,29 +45,104 @@ public class HomeActivity extends AppCompatActivity
     public static final String TAG = "HomeActivity";
     public static final int INVITATION_MESSAGE = R.string.invitation_message;
     private static final int REQUEST_LOCATION_PERMISSION = 324;
+    String uid;
+    DatabaseReference profilesRef;
+    GeofenceService myService;
+    boolean isBound = false;
+    List<ProfileModel> profileList;
     private Context mContext;
+    /*service binder code*/
+    private ServiceConnection myConnection = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            GeofenceService.MyLocalBinder binder = (GeofenceService.MyLocalBinder) service;
+            myService = binder.getService();
+            isBound = true;
+            Toast.makeText(myService, "service connected", Toast.LENGTH_SHORT).show();
+        }
+
+        public void onServiceDisconnected(ComponentName arg0) {
+            Toast.makeText(myService, "disconnected", Toast.LENGTH_SHORT).show();
+            isBound = false;
+        }
+
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        mContext = getApplicationContext();
-
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        setSupportActionBar(toolbar);
+        mContext = getApplicationContext();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         handlePermissions();
         Intent intent = new Intent(this, GeofenceService.class);
         bindService(intent, myConnection, Context.BIND_AUTO_CREATE);
+
+        setDatabase();
+
+    }
+
+    private void setDatabase() {
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        profilesRef = FirebaseDatabase.getInstance().getReference("profiles").child(uid);
+
+
+        //creating blank list in memory
+        profileList = new ArrayList<>();
+
+        //recyclerview obj
+
+        final RecyclerView rvProfileList = (RecyclerView) findViewById(R.id.rvProfiles);
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        //passing layout manager in recyclerview
+        rvProfileList.setLayoutManager(manager);
+        final ProfileAdapter adapter = new ProfileAdapter(this,profileList);
+        rvProfileList.setAdapter(adapter);
+        SlideInUpAnimator animator = new SlideInUpAnimator(new OvershootInterpolator(1f));
+        rvProfileList.setItemAnimator(animator);
+        rvProfileList.getItemAnimator().setAddDuration(1000);
+        //setup listener
+        //using anonymous class
+
+        profilesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //data is in dataSnapshot obj
+                int position = 0;
+                profileList.clear();
+                if (dataSnapshot.hasChildren()) { //tab
+
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) { // datasnapshot.getChildren().iter
+                        if (snapshot.getKey().equals("geofire")) {
+                            continue;
+                        }
+                        profileList.add(new ProfileModel(snapshot));
+                        adapter.notifyItemInserted(position);
+                        position++;
+                    }
+
+                } else {
+                    Toast.makeText(HomeActivity.this, "No Profiles", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(HomeActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
@@ -70,7 +157,7 @@ public class HomeActivity extends AppCompatActivity
                 Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(this, "Not Marshmellow", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Not Marshmellow", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -84,7 +171,6 @@ public class HomeActivity extends AppCompatActivity
             }
         }
     }
-
 
     private void sendInvitation() {
         Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
@@ -177,23 +263,4 @@ public class HomeActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
-    GeofenceService myService;
-    boolean isBound = false;
-
-    private ServiceConnection myConnection = new ServiceConnection() {
-
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            GeofenceService.MyLocalBinder binder = (GeofenceService.MyLocalBinder) service;
-            myService = binder.getService();
-            isBound = true;
-        }
-
-        public void onServiceDisconnected(ComponentName arg0) {
-            isBound = false;
-        }
-
-    };
 }

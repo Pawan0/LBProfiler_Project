@@ -7,6 +7,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,9 +37,11 @@ import trainedge.lbprofiler.ProfileGeofenceNotification;
 import trainedge.lbprofiler.R;
 import trainedge.lbprofiler.SoundProfileManager;
 
+import static android.R.id.message;
 import static java.lang.String.format;
 
 public class GeofenceService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    private final IBinder myBinder = new MyLocalBinder();
     String service;
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
@@ -46,10 +49,8 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
     SoundProfileManager spm;
 
     public GeofenceService() {
-        service = "location geofence service";
+        service = "location_geofence_service";
     }
-
-    private final IBinder myBinder = new MyLocalBinder();
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -74,12 +75,6 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
         SimpleDateFormat dateformat =
                 new SimpleDateFormat("HH:mm:ss MM/dd/yyyy", Locale.US);
         return (dateformat.format(new Date()));
-    }
-
-    public class MyLocalBinder extends Binder {
-        public GeofenceService getService() {
-            return GeofenceService.this;
-        }
     }
 
     @Override
@@ -114,9 +109,9 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
     private void handle_geofire(Location location) {
         mCurrentLocation = location;//call for address here
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("geofire").child(uid);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("profiles").child(uid).child("geofire");
         GeoFire geoFire = new GeoFire(ref);
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), 0.6);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(location.getLatitude(), location.getLongitude()), 0.1);
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
@@ -143,6 +138,7 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
             @Override
             public void onGeoQueryReady() {
                 System.out.println("All initial data has been loaded and events have been fired!");
+                Toast.makeText(GeofenceService.this, "service ready", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -159,7 +155,6 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-
     protected void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -171,6 +166,12 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(
                     mGoogleApiClient, this);
+        }
+    }
+
+    public class MyLocalBinder extends Binder {
+        public GeofenceService getService() {
+            return GeofenceService.this;
         }
     }
 

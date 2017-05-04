@@ -19,19 +19,21 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
+import static trainedge.lbprofiler.ProfileAdapter.PROFILE_NAME;
 import static trainedge.lbprofiler.R.id.etProfile;
 import static trainedge.lbprofiler.R.id.tvAddress_Get;
 
-public class ProfileCreation extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class ViewProfileActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+
     TextView Locaddress;
     Button btnCreate;
     private EditText etName;
@@ -45,25 +47,55 @@ public class ProfileCreation extends AppCompatActivity implements AdapterView.On
     private Uri[] msgtone;
     private Uri ring;
     private Uri msg;
-    private String address;
+
     private Double lat;
     private Double lng;
+    private String key;
+    private String uid;
+    private DatabaseReference profilesRef;
+    private ProfileModel profileModel;
+    private String address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_creation);
+        setContentView(R.layout.activity_view_profile);
         bindViews();
         if (getIntent() != null) {
-            handleLocationData();
+            handleProfileData();
         }
         initViews();
 
     }
 
-    private void bindViews() {
+    private void handleProfileData() {
+        Bundle extras = getIntent().getExtras();
+        key = extras.getString(PROFILE_NAME);
+        loadDataFromFirebase(key);
 
-        Locaddress = (TextView) findViewById(tvAddress_Get);
+    }
+
+    private void loadDataFromFirebase(String key) {
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        profilesRef = FirebaseDatabase.getInstance().getReference("profiles").child(uid).child(key);
+        profilesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
+                    profileModel = new ProfileModel(dataSnapshot);
+                    updateUI();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void bindViews() {
+        Locaddress = (TextView) findViewById(R.id.tvAddress);
         etName = (EditText) findViewById(etProfile);
         etGeofence = (EditText) findViewById(R.id.etGeofence);
         spRing = (Spinner) findViewById(R.id.spRing);
@@ -72,11 +104,10 @@ public class ProfileCreation extends AppCompatActivity implements AdapterView.On
         sVibrate = (Switch) findViewById(R.id.sVibration);
         sSilentMode = (Switch) findViewById(R.id.sSilentMode);
         btnCreate = (Button) findViewById(R.id.btnCreate);
-
-
     }
 
     private void initViews() {
+
         ringtone = getRingtone();
         ArrayAdapter<Uri> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ringtone);
         spRing.setAdapter(adapter);
@@ -86,13 +117,31 @@ public class ProfileCreation extends AppCompatActivity implements AdapterView.On
         setupListeners();
     }
 
-    private void handleLocationData() {
-        Bundle extras = getIntent().getExtras();
-        address = extras.getString("trainedge.lbprofiler.address");
-        lat = extras.getDouble("trainedge.lbprofiler.latitude");
-        lng = extras.getDouble("trainedge.lbprofiler.longitude");
-        updateUI(address, lat, lng);
+    private void updateUI() {
+        lat = profileModel.getLat();
+        lng = profileModel.getLng();
+        etName.setText(profileModel.getKey());
+        etName.setEnabled(false);
+        address = profileModel.getAddress();
+        Locaddress.setText(address);
+        skVolume.setProgress(profileModel.getVolume());
+        sVibrate.setChecked(profileModel.isVibrate());
+        sSilentMode.setChecked(profileModel.isSilent());
+        String msgtoneSelected = profileModel.getMsgtone();
+        for (int i = 0; i < msgtone.length; i++) {
+            if (msgtone[i].toString().equals(msgtoneSelected)) {
+                spMsg.setSelection(i);
+            }
+        }
+        String ringtoneSelected = profileModel.getRingtone();
+        for (int i = 0; i < ringtone.length; i++) {
+            if (ringtone[i].toString().equals(ringtoneSelected)) {
+                spRing.setSelection(i);
+            }
+        }
+        etGeofence.setText(profileModel.getRadius());
     }
+
 
     private void setupListeners() {
         spRing.setOnItemSelectedListener(this);
@@ -136,9 +185,6 @@ public class ProfileCreation extends AppCompatActivity implements AdapterView.On
         return alarms;
     }
 
-    private void updateUI(String address, Double lat, Double lng) {
-        Locaddress.setText(address);
-    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -161,13 +207,12 @@ public class ProfileCreation extends AppCompatActivity implements AdapterView.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnCreate:
-                createNewSoundProfile();
+                editSoundProfile();
                 break;
         }
     }
 
-    private void createNewSoundProfile() {
-
+    private void editSoundProfile() {
         String profileName = etName.getText().toString().trim();
         String geoFenceStr = etGeofence.getText().toString().trim();
         if (profileName.isEmpty()) {
@@ -182,12 +227,11 @@ public class ProfileCreation extends AppCompatActivity implements AdapterView.On
             Toast.makeText(this, "no ringtone will be audible", Toast.LENGTH_SHORT).show();
             sVibrate.setChecked(false);
             saveSoundProfile(profileName, geoFenceStr, address, lat, lng, 0, null, null, false, true);
-        } else {
-            int volume = skVolume.getProgress();
-            saveSoundProfile(profileName, geoFenceStr, address, lat, lng, volume, ringtone[spRing.getSelectedItemPosition()], msgtone[spMsg.getSelectedItemPosition()], sVibrate.isChecked(), false);
         }
-    }
+        int volume = skVolume.getProgress();
+        saveSoundProfile(profileName, geoFenceStr, address, lat, lng, volume, ringtone[spRing.getSelectedItemPosition()], msgtone[spMsg.getSelectedItemPosition()], sVibrate.isChecked(), false);
 
+    }
     private void saveSoundProfile(final String profileName, String geoFenceStr, String address, Double lat, Double lng, int volume, Uri ring, Uri msg, boolean vibrate, boolean silent) {
         final ProgressDialog dialog = new ProgressDialog(this);
         dialog.setCancelable(false);
@@ -216,30 +260,13 @@ public class ProfileCreation extends AppCompatActivity implements AdapterView.On
         profilesRef.setValue(profileData, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                Toast.makeText(ProfileCreation.this, "saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ViewProfileActivity.this, "saved", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
-                createGeofenceforProfile(profileName);
-            }
-        });
-    }
-
-    private void createGeofenceforProfile(String profileName) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("profiles").child(uid).child("geofire");
-        GeoFire geoFire = new GeoFire(ref);
-        geoFire.setLocation(profileName, new GeoLocation(lat, lng), new GeoFire.CompletionListener() {
-            @Override
-            public void onComplete(String key, DatabaseError error) {
-                if (error != null) {
-                    Toast.makeText(ProfileCreation.this, "There was an error saving the location to GeoFire: " + error, Toast.LENGTH_SHORT).show();
-
-                } else {
-                    Toast.makeText(ProfileCreation.this, "success", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(ProfileCreation.this, HomeActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                }
+                Toast.makeText(ViewProfileActivity.this, "success", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ViewProfileActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
     }
