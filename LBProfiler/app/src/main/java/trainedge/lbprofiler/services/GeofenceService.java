@@ -9,6 +9,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -41,7 +42,7 @@ import static android.R.id.message;
 import static java.lang.String.format;
 
 public class GeofenceService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-    private final IBinder myBinder = new MyLocalBinder();
+
     String service;
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
@@ -54,13 +55,18 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
 
     @Override
     public IBinder onBind(Intent arg0) {
+
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
         buildGoogleApiClient();
         spm = new SoundProfileManager(GeofenceService.this);
-
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
         }
-        return myBinder;
+        return START_STICKY_COMPATIBILITY;
     }
 
     private void buildGoogleApiClient() {
@@ -87,7 +93,12 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
         }
         //currentLocation reqeuest
         createLocationRequest();
-        startLocationUpdates();
+        try {
+
+            startLocationUpdates();
+        }catch (Exception e){
+
+        }
 
     }
 
@@ -117,7 +128,7 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
                 ProfileGeofenceNotification.notify(GeofenceService.this, "sound profile updated", 0);
-                spm.changeSoundProfile(key);
+                spm.changeSoundProfile(key,location);
                 String msgToDisplay = format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude, 0);
                 ProfileGeofenceNotification.notify(GeofenceService.this, msgToDisplay, 1);
             }
@@ -137,8 +148,8 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
 
             @Override
             public void onGeoQueryReady() {
-                System.out.println("All initial data has been loaded and events have been fired!");
-                Toast.makeText(GeofenceService.this, "service ready", Toast.LENGTH_SHORT).show();
+                //System.out.println("All initial data has been loaded and events have been fired!");
+                //Toast.makeText(GeofenceService.this, "service ready", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -162,17 +173,7 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
-    protected void stopLocationUpdates() {
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(
-                    mGoogleApiClient, this);
-        }
-    }
 
-    public class MyLocalBinder extends Binder {
-        public GeofenceService getService() {
-            return GeofenceService.this;
-        }
-    }
+
 
 }

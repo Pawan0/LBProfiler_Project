@@ -1,6 +1,8 @@
 package trainedge.lbprofiler;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +40,7 @@ import java.util.List;
 
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import trainedge.lbprofiler.services.GeofenceService;
+import trainedge.lbprofiler.services.Timerservice;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -51,23 +54,9 @@ public class HomeActivity extends AppCompatActivity
     boolean isBound = false;
     List<ProfileModel> profileList;
     private Context mContext;
-    /*service binder code*/
-    private ServiceConnection myConnection = new ServiceConnection() {
+    private PendingIntent pIntent;
+    private AlarmManager alarm;
 
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            GeofenceService.MyLocalBinder binder = (GeofenceService.MyLocalBinder) service;
-            myService = binder.getService();
-            isBound = true;
-            Toast.makeText(myService, "service connected", Toast.LENGTH_SHORT).show();
-        }
-
-        public void onServiceDisconnected(ComponentName arg0) {
-            Toast.makeText(myService, "disconnected", Toast.LENGTH_SHORT).show();
-            isBound = false;
-        }
-
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +77,10 @@ public class HomeActivity extends AppCompatActivity
 
         handlePermissions();
         Intent intent = new Intent(this, GeofenceService.class);
-        bindService(intent, myConnection, Context.BIND_AUTO_CREATE);
+        startService(new Intent(this, GeofenceService.class));
 
         setDatabase();
-
+        scheduleAlarm();
     }
 
     private void setDatabase() {
@@ -108,7 +97,7 @@ public class HomeActivity extends AppCompatActivity
         LinearLayoutManager manager = new LinearLayoutManager(this);
         //passing layout manager in recyclerview
         rvProfileList.setLayoutManager(manager);
-        final ProfileAdapter adapter = new ProfileAdapter(this,profileList);
+        final ProfileAdapter adapter = new ProfileAdapter(this, profileList);
         rvProfileList.setAdapter(adapter);
         SlideInUpAnimator animator = new SlideInUpAnimator(new OvershootInterpolator(1f));
         rvProfileList.setItemAnimator(animator);
@@ -262,5 +251,21 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void scheduleAlarm() {
+        // Construct an intent that will execute the AlarmReceiver
+        Intent intent = new Intent(getApplicationContext(), Timerservice.class);
+        // Create a PendingIntent to be triggered when the alarm goes off
+        pIntent = PendingIntent.getBroadcast(this, Timerservice.REQUEST_CODE,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // Setup periodic alarm every 5 seconds
+        long firstMillis = System.currentTimeMillis(); // alarm is set right away
+        alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        // First parameter is the type: ELAPSED_REALTIME, ELAPSED_REALTIME_WAKEUP, RTC_WAKEUP
+        // Interval can be INTERVAL_FIFTEEN_MINUTES, INTERVAL_HALF_HOUR, INTERVAL_HOUR, INTERVAL_DAY
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, firstMillis,
+                60000, pIntent);
+
     }
 }

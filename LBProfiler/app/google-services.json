@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "663471642920-jf3upo6pu592cbntenpnl96hh4njjvee.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "trainedge.lbprofiler",
+            "certificate_hash": "bcd843d4f0c7c893c7db3c07bf92ca552b3be7c0"
+          }
+        },
+        {
           "client_id": "663471642920-q9ubggvivjhnm74bdsfq0o1r86to3f83.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
