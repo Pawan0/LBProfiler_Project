@@ -6,10 +6,7 @@
             android:id="@+id/add_location"
             android:icon="@android:drawable/ic_input_add"
             android:title="Add Location Profile" />
-        <item
-            android:id="@+id/manage_location"
-            android:icon="@drawable/ic_edit_location_black_24dp"
-            android:title="Manage Location Profile" />
+
         <item
             android:id="@+id/feedback"
             android:icon="@drawable/ic_feedback_black_24dp"
