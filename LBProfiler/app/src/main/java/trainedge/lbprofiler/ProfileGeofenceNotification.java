@@ -23,10 +23,7 @@ public class ProfileGeofenceNotification {
 
 
         final String ticker = exampleString;
-        final String title = res.getString(
-                R.string.task_geofence_notification_title_template, exampleString);
-        final String text = res.getString(
-                R.string.task_geofence_notification_placeholder_text_template, exampleString);
+
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 
@@ -37,8 +34,8 @@ public class ProfileGeofenceNotification {
                 // Set required fields, including the small icon, the
                 // notification title, and text.
                 .setSmallIcon(R.drawable.ic_stat_task_geofence)
-                .setContentTitle(title)
-                .setContentText(text)
+                .setContentTitle("Location Profiler")
+                .setContentText("change profile automatically")
 
                 // All fields below this line are optional.
 
@@ -80,22 +77,7 @@ public class ProfileGeofenceNotification {
                 // should ensure that the activity in this notification's
                 // content intent provides access to the same actions in
                 // another way.
-                .addAction(
-                        R.drawable.ic_action_stat_share,
-                        res.getString(R.string.action_share),
-                        PendingIntent.getActivity(
-                                context,
-                                0,
-                                Intent.createChooser(new Intent(Intent.ACTION_SEND)
-                                        .setType("text/plain")
-                                        .putExtra(Intent.EXTRA_TEXT, "Dummy text"), "Dummy title"),
-                                PendingIntent.FLAG_UPDATE_CURRENT))
-                .addAction(
-                        R.drawable.ic_action_stat_reply,
-                        res.getString(R.string.action_reply),
-                        null)
 
-                // Automatically dismiss the notification when it is touched.
                 .setAutoCancel(true);
 
         notify(context, builder.build());

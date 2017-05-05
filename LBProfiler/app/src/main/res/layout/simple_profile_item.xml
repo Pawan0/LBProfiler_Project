@@ -36,7 +36,8 @@
             android:layout_alignStart="@+id/tvProfileName"
             android:layout_below="@+id/tvProfileName"
             android:layout_marginBottom="16dp"
-            android:text="active" />
+            android:text="active"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tvView"

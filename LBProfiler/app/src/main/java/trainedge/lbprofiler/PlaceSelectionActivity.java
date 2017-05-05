@@ -1,7 +1,6 @@
 package trainedge.lbprofiler;
 
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Geocoder;
@@ -26,16 +25,10 @@ import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -143,8 +136,8 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
         CircleOptions circleOptions = new CircleOptions();
         circleOptions.center(latLng);
         circleOptions.radius(200);
-        circleOptions.strokeColor(Color.argb(100,055,55,40));
-        circleOptions.fillColor(Color.argb(100,255,255,0));
+        circleOptions.strokeColor(Color.argb(100, 055, 55, 40));
+        circleOptions.fillColor(Color.argb(100, 255, 255, 0));
         mMap.addCircle(circleOptions);
     }
 
@@ -255,46 +248,13 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
     public void onConnected(@Nullable Bundle bundle) {
         Toast.makeText(this, "connected", Toast.LENGTH_SHORT).show();
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
-        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
-                final Status status = locationSettingsResult.getStatus();
-                final LocationSettingsStates states = locationSettingsResult.getLocationSettingsStates();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        // All currentLocation settings are satisfied. The client can
-                        // initialize currentLocation requests here.
-
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied, but this can be fixed
-                        // by showing the user a dialog.
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
-                            status.startResolutionForResult(
-                                    PlaceSelectionActivity.this,
-                                    REQUEST_CHECK_SETTINGS);
-                        } catch (IntentSender.SendIntentException e) {
-                            // Ignore the error.
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way
-                        // to fix the settings so we won't show the dialog.
-
-                        break;
-                }
-            }
-        });
 
         if (!Geocoder.isPresent()) {
             Toast.makeText(this, R.string.no_geocoder_available, Toast.LENGTH_LONG).show();
             return;
         }
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+            //return;
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
@@ -365,7 +325,7 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
             public void onKeyEntered(String key, GeoLocation location) {
                 ProfileGeofenceNotification.notify(PlaceSelectionActivity.this, "sound profile updated", 0);
                 SoundProfileManager spm = new SoundProfileManager(PlaceSelectionActivity.this);
-                spm.changeSoundProfile(key);
+                spm.changeSoundProfile(key, location);
             }
 
             @Override
