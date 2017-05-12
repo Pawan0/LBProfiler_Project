@@ -325,7 +325,7 @@ public class PlaceSelectionActivity extends FragmentActivity implements OnMapRea
             public void onKeyEntered(String key, GeoLocation location) {
                 ProfileGeofenceNotification.notify(PlaceSelectionActivity.this, "sound profile updated", 0);
                 SoundProfileManager spm = new SoundProfileManager(PlaceSelectionActivity.this);
-                spm.changeSoundProfile(key, location);
+                spm.changeSoundProfile(PlaceSelectionActivity.this, key, location);
             }
 
             @Override

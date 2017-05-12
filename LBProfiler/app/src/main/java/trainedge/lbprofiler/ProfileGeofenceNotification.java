@@ -29,7 +29,8 @@ public class ProfileGeofenceNotification {
 
                 // Set appropriate defaults for the notification light, sound,
                 // and vibration.
-                .setDefaults(Notification.DEFAULT_ALL)
+                .setDefaults(Notification.DEFAULT_VIBRATE)
+                .setOnlyAlertOnce(true)
 
                 // Set required fields, including the small icon, the
                 // notification title, and text.

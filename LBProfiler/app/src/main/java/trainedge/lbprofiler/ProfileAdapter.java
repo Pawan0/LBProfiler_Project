@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.List;
 
 
@@ -44,10 +47,18 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileHolder> {
                 switch (v.getId()) {
                     case R.id.tvView:
                         Intent intent = new Intent(context, ViewProfileActivity.class);
-                        intent.putExtra(PROFILE_NAME,model.getKey());
+                        intent.putExtra(PROFILE_NAME, model.getKey());
                         context.startActivity(intent);
                         break;
                 }
+            }
+        });
+        holder.rlContainer.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                FirebaseDatabase.getInstance().getReference("profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(model.getKey()).removeValue();
+                FirebaseDatabase.getInstance().getReference("profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("geofire").child(model.getKey()).removeValue();
+                return true;
             }
         });
 

@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 public class ProfileHolder extends RecyclerView.ViewHolder {
 
+    View rlContainer;
     TextView tvProfileView;
     TextView tvProfileState;
     TextView tvProfileName;
@@ -17,5 +18,6 @@ public class ProfileHolder extends RecyclerView.ViewHolder {
         tvProfileName = (TextView) itemView.findViewById(R.id.tvProfileName);
         tvProfileState = (TextView) itemView.findViewById(R.id.tvState);
         tvProfileView = (TextView) itemView.findViewById(R.id.tvView);
+        rlContainer =  itemView.findViewById(R.id.rlContainer);
     }
 }

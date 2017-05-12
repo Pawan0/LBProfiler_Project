@@ -5,11 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Binder;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -38,7 +35,6 @@ import trainedge.lbprofiler.ProfileGeofenceNotification;
 import trainedge.lbprofiler.R;
 import trainedge.lbprofiler.SoundProfileManager;
 
-import static android.R.id.message;
 import static java.lang.String.format;
 
 public class GeofenceService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -96,7 +92,7 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
         try {
 
             startLocationUpdates();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -127,18 +123,13 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                ProfileGeofenceNotification.notify(GeofenceService.this, "sound profile updated", 0);
-                spm.changeSoundProfile(key,location);
-                String msgToDisplay = format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude, 0);
-                ProfileGeofenceNotification.notify(GeofenceService.this, msgToDisplay, 1);
+                spm.changeSoundProfile(GeofenceService.this, key, location);
             }
 
             @Override
             public void onKeyExited(String key) {
-                spm.setToDefualt();
-                ProfileGeofenceNotification.notify(GeofenceService.this, "sound profile default", 0);
+                spm.setToDefualt(key);
                 Toast.makeText(GeofenceService.this, "+", Toast.LENGTH_SHORT).show();
-                System.out.println(format("Key %s is no longer in the search area", key));
             }
 
             @Override
@@ -161,7 +152,7 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
 
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(5*60000);
+        mLocationRequest.setInterval(5 * 60000);
         mLocationRequest.setFastestInterval(60000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
@@ -172,8 +163,6 @@ public class GeofenceService extends Service implements GoogleApiClient.Connecti
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
-
-
 
 
 }
